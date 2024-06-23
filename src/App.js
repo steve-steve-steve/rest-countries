@@ -22,7 +22,10 @@ function App() {
     } }>{buttonText}</button>;
   };
 
-  const [countries, setCountries] = useState([])
+  const [countries, setCountries] = useState(() => {
+    const savedCountries = localStorage.getItem('countries');
+    return savedCountries ? JSON.parse(savedCountries) : [];
+  });
 
   const [selectedRow, setSelectedRow] = useState({});
   const [colDefs] = useState([
@@ -66,6 +69,10 @@ function App() {
       }
     }
     fetchCountries()
+  }, [countries]);
+
+  useEffect(() => {
+    localStorage.setItem('countries', JSON.stringify(countries));
   }, [countries]);
 
   const buildCurrencylist = (currencies) => currencies.map(c => c.name).join(", ")
