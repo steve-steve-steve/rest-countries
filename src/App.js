@@ -10,6 +10,7 @@ function App() {
   const gridRef = useRef();
 
   const [countries, setCountries] = useState([])
+
   const [selectedRow, setSelectedRow] = useState({});
   const [colDefs] = useState([
     {field: "name", flex: 1, filter: true, sort: "asc"},
@@ -20,7 +21,10 @@ function App() {
   ]);
 
   useEffect(() => {
-
+    if (countries.length > 0) {
+      if (!selectedRow.name) setSelectedRow(countries[129])
+      return
+    }
     const fetchCountries = async () => {
       try {
         const {data} = await axios.get('https://restcountries.com/v3.1/all')
@@ -30,6 +34,16 @@ function App() {
           population: new Intl.NumberFormat().format(Number(e.population)),
           languages: e.languages ? Object.values(e.languages).join(", ") : "N/A",
           currencies: e.currencies ? buildCurrencylist(Object.values(e.currencies)) : "N/A",
+          continents: e.continents.join(', '),
+          unMember: e.unMember ? "Yes" : "No",
+          region: e.region,
+          capital: e.capital,
+          landlocked: e.landlocked ? "Yes" : "No",
+          coatOfArms: e.coatOfArms.svg,
+          subRegion: e.subregion,
+          startOfWeek: e.startOfWeek,
+          rightHandDrive: e.car.side === "right" ? "Yes" : "No",
+          favourite: false
         }))
         setCountries(countries);
         setSelectedRow(countries[129])
@@ -50,6 +64,26 @@ function App() {
   return (
     <div>
       <div className="Country-details-header">{selectedRow.name}</div>
+      <div className="Country-details-container">
+        <div className="Country-details-section">
+          <div>Capital: {selectedRow.capital}</div>
+          <div>Region: {selectedRow.region}</div>
+          <div>Sub-region: {selectedRow.subRegion}</div>
+        </div>
+        <div className="Country-details-section">
+          <div>Continent(s): {selectedRow.continents}</div>
+          <div>Landlocked: {selectedRow.landlocked}</div>
+          <div>UN Member: {selectedRow.unMember}</div>
+        </div>
+        <div className="Country-details-section">
+          <div>Capital: {selectedRow.capital}</div>
+          <div>Right Hand Drive: {selectedRow.rightHandDrive}</div>
+          <div>Coat of Arms:
+            <img className="Country-details-coat-of-arms" src={selectedRow.coatOfArms}
+                 alt="Coat of Arms" width="20" height="20"/>
+          </div>
+        </div>
+      </div>
 
       <div
         className="ag-theme-quartz"
