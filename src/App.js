@@ -10,6 +10,7 @@ function App() {
   const gridRef = useRef();
 
   const [countries, setCountries] = useState([])
+  const [selectedRow, setSelectedRow] = useState({});
   const [colDefs] = useState([
     {field: "name", flex: 1, filter: true, sort: "asc"},
     {field: "flag", flex: 0.5},
@@ -31,6 +32,7 @@ function App() {
           currencies: e.currencies ? buildCurrencylist(Object.values(e.currencies)) : "N/A",
         }))
         setCountries(countries);
+        setSelectedRow(countries[129])
       } catch (error) {
         console.error("Error getting countries:", error);
       }
@@ -40,8 +42,15 @@ function App() {
 
   const buildCurrencylist = (currencies) => currencies.map(c => c.name).join(", ")
 
+  const onSelectionChanged = useCallback(() => {
+    const row = gridRef.current.api.getSelectedRows();
+    if (row[0]) setSelectedRow(row[0])
+  }, [setSelectedRow]);
+
   return (
     <div>
+      <div className="Country-details-header">{selectedRow.name}</div>
+
       <div
         className="ag-theme-quartz"
         style={{height: 500}}
@@ -51,6 +60,7 @@ function App() {
           rowData={countries}
           columnDefs={colDefs}
           rowSelection={"single"}
+          onSelectionChanged={onSelectionChanged}
         />
       </div>
     </div>
