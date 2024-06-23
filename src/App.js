@@ -9,6 +9,19 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied
 function App() {
   const gridRef = useRef();
 
+  const FavouriteButtonComponent = (props) => {
+    let buttonText = props.data.favourite ? "Remove" : "Add"
+    return <button onClick={() => {
+      setSelectedRow(props.data)
+      setCountries(prevCountries =>
+        prevCountries.map(country => country.name === props.data.name ? {
+            ...country,
+              favourite: !props.data.favourite
+          } : country
+        ))
+    } }>{buttonText}</button>;
+  };
+
   const [countries, setCountries] = useState([])
 
   const [selectedRow, setSelectedRow] = useState({});
@@ -18,6 +31,7 @@ function App() {
     {field: "population", flex: 1},
     {field: "languages", flex: 3, filter: true},
     {field: "currencies", flex: 2, filter: true},
+    {field: "favourite", flex: 1, cellRenderer: FavouriteButtonComponent, filter: true }
   ]);
 
   useEffect(() => {
